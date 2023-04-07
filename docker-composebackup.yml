@@ -1,0 +1,45 @@
+version: '3.3'
+
+services:
+   nginx:
+     depends_on:
+       - wordpress
+     restart: always
+     build:
+       context: .
+       dockerfile: Dockerfile-nginx
+     ports:
+       - "80:80"
+
+   db:
+     image: mysql:5.7
+     container_name: docker-wordpress-db-1
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: fr1edEgg$
+       MYSQL_DATABASE: clouddays_DB
+       MYSQL_USER: clouddays
+       MYSQL_PASSWORD: clouddays.info
+
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:latest
+     container_name: docker-wordpress-wordpress-1
+       #     ports:
+     #  - "80:80"
+     # - "443:443"
+     volumes:
+       - wordpress:/var/www/html
+
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: clouddays
+       WORDPRESS_DB_PASSWORD: clouddays.info
+       WORDPRESS_DB_NAME: clouddays_DB
+volumes:
+    db_data: {}
+    wordpress:
